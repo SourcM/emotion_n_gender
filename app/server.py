@@ -1,3 +1,4 @@
+import os
 import subprocess
 proc = subprocess.Popen('apt-get install -y libgtk2.0-dev', shell=True, stdin=None, stdout=open(os.devnull,"wb"), stderr=STDOUT, executable="/bin/bash")
 proc.wait()
