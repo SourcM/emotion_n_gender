@@ -1,4 +1,4 @@
-import dlib
+from mtcnn import MTCNN
 import cv2
 import numpy as np
 
@@ -14,7 +14,35 @@ import numpy as np
 #         cv2.waitKey(0)
 #         cv2.destroyAllWindows()
 
-def detect_n_crop(image,detector,sp):
+def extract_keypoints(det):
+    # k = det[0]['keypoints']
+    landmarks = np.zeros((5,2), dtype=int)
+    for kk, vv in det[0]['keypoints'].items():
+        if kk=='nose':
+            landmarks[2] = vv
+        elif kk=='mouth_right':
+            landmarks[4] = vv
+        elif kk=='mouth_left':
+            landmarks[3] = vv
+        elif kk=='right_eye':
+            landmarks[1] = vv
+        elif kk=='left_eye':
+            landmarks[0] = vv
+    
+    return landmarks
+
+def crop_img(image, coords5):
+    # print('about to crop and extract features')
+    #align and crop
+    templ = np.array([[83,  96],[171, 95], [127, 162], [90, 208], [166, 206]])
+    _,_,Tform,_ = procrustes(templ, coords5, scaling=True, reflection='best')
+    _,transmat = get_transmat(Tform)
+    outImage = cv2.warpAffine(image, transmat, (256, 256))
+    outCoord5 = rotate_coords(coords5, Tform)
+
+    return outImage
+
+def detect_n_crop_dlib(image,detector,sp):
 
     
     #detector = dlib.cnn_face_detection_model_v1('/home/abukar/Dev/Image_Capture_Scripts/dlib_exp/mmod_human_face_detector.dat')
@@ -39,6 +67,16 @@ def detect_n_crop(image,detector,sp):
         #print('No face detected')
 
     return outImage, outCoord5, det_flag
+
+def detect_n_crop(image,detector):
+
+    
+    det = detector.detect_faces(image)
+    landmarks = extract_keypoints(det)
+    img = crop_img(image, landmarks)
+    
+
+    return img
 
 def shape_to_np(shape, dtype="int"):
     default_landmarks = np.array([68, 69, 30, 48, 54])
