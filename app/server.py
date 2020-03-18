@@ -1,5 +1,7 @@
 import os
 import subprocess
+proc = subprocess.Popen('apt-get -y update', shell=True, stdin=None)
+proc.wait()
 proc = subprocess.Popen('apt-get install -y libgtk2.0-dev', shell=True, stdin=None)
 proc.wait()
 # subprocess.run("apt-get install -y libgtk2.0-dev")
