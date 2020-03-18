@@ -1,3 +1,6 @@
+subprocess.run("apt-get install libgtk2.0-dev")
+
+
 from mtcnn import MTCNN
 import aiohttp
 import asyncio
