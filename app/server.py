@@ -9,9 +9,23 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 import numpy as np
+import face_detector as fd
+import dlib
+import cv2
+import os
+# from PIL import Image
 
 export_file_url = 'https://drive.google.com/uc?export=download&id=1rpTBN-ImVr_Rar78no5R_k6df0tLRyTS'
 export_file_name = 'emotion_gender.pkl'
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+predictor_path = os.path.join(basedir, 'shape_predictor_68_face_landmarks.dat')
+sp = dlib.shape_predictor(predictor_path)
+detector = dlib.get_frontal_face_detector()
+
+UPLOAD_FOLDER = os.path.join(basedir, 'upload_images')
+
+
 
 classes = ['female', 'happy', 'male', 'unhappy']
 k_out = ['Female', 'Happy', 'Male', 'Not-happy']
@@ -61,12 +75,20 @@ async def homepage(request):
 async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
-    img = open_image(BytesIO(img_bytes))
+    img = cv2.imdecode(np.fromstring(img_bytes, np.uint8), cv2.IMREAD_UNCHANGED)
     # prediction = learn.predict(img)[0]
-    _,_,outputs = learn.predict(img)#[0]
-    np_out = outputs.numpy()
-    ind = np.argpartition(np_out, -2)[-2:]
-    prediction=k_out[ind[0]]+' '+k_out[ind[1]]
+    img, _, det_flag= fd.detect_n_crop(img,detector,sp)
+    # cv2.imwrite(os.path.join(UPLOAD_FOLDER, 'im.jpg'), img)
+    if det_flag == 1:
+        #convert cv image to format expected by fastai
+        t = torch.tensor(np.ascontiguousarray(img).transpose(2,0,1)).float()/255
+        # make prediction
+        _,_,outputs = learn.predict(Image(t))
+        np_out = outputs.numpy()
+        ind = np.argpartition(np_out, -2)[-2:]
+        prediction=k_out[ind[0]]+' '+k_out[ind[1]]
+    else:
+        prediction = 'No face'
     return JSONResponse({'result': str(prediction)})
 
 
