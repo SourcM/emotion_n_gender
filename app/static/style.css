@@ -1,5 +1,5 @@
 body {
-    background-color: #fff;
+    background-color: #000;
 }
 
 .no-display {
@@ -17,8 +17,16 @@ body {
     font-size: 30px;
     margin-top: 1em;
     margin-bottom: 1em;
-    color: #262626;
+    color: #fff;
 }
+
+.subtitle {
+    font-size: 20px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    color: #fff;
+}
+
 
 .content {
     margin-top: 10em;
@@ -36,7 +44,8 @@ body {
 .result-label {
     margin-top: 0.5em;
     padding: 10px;
-    font-size: 13px;
+    font-size: 15px;
+    color: #fff;
 }
 
 button.choose-file-button {
@@ -44,19 +53,19 @@ button.choose-file-button {
     height: 40px;
     border-radius: 2px;
     background-color: #ffffff;
-    border: solid 1px #7052CB;
+    border: solid 1px rgb(172, 69, 43);
     font-size: 13px;
-    color: #7052CB;
+    color: #000;
 }
 
 button.analyze-button {
     width: 200px;
     height: 40px;
-    border: solid 1px #7052CB;
+    border: solid 1px rgb(172, 69, 43);
     border-radius: 2px;
-    background-color: #7052CB;
+    background-color: #fff;
     font-size: 13px;
-    color: #ffffff;
+    color: #000;
 }
 
 button:focus {

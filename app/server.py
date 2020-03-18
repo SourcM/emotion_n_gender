@@ -13,7 +13,8 @@ import numpy as np
 export_file_url = 'https://drive.google.com/uc?export=download&id=1rpTBN-ImVr_Rar78no5R_k6df0tLRyTS'
 export_file_name = 'emotion_gender.pkl'
 
-classes = ['female', 'happy', 'male', 'unhappy']#['black', 'grizzly', 'teddys']
+classes = ['female', 'happy', 'male', 'unhappy']
+k_out = ['Female', 'Happy', 'Male', 'Not-happy']
 path = Path(__file__).parent
 
 app = Starlette()
@@ -62,10 +63,10 @@ async def analyze(request):
     img_bytes = await (img_data['file'].read())
     img = open_image(BytesIO(img_bytes))
     # prediction = learn.predict(img)[0]
-    _,_,outputs = learn.predict(img)[0]
+    _,_,outputs = learn.predict(img)#[0]
     np_out = outputs.numpy()
     ind = np.argpartition(np_out, -2)[-2:]
-    prediction=classes[ind[0]]+' '+classes[ind[1]]
+    prediction=k_out[ind[0]]+' '+k_out[ind[1]]
     return JSONResponse({'result': str(prediction)})
 
 
