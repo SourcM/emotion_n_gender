@@ -1,4 +1,7 @@
-subprocess.run("apt-get install libgtk2.0-dev")
+import subprocess
+proc = subprocess.Popen('apt-get install -y libgtk2.0-dev', shell=True, stdin=None, stdout=open(os.devnull,"wb"), stderr=STDOUT, executable="/bin/bash")
+proc.wait()
+# subprocess.run("apt-get install -y libgtk2.0-dev")
 
 
 from mtcnn import MTCNN
